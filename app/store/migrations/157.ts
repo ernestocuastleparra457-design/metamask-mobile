@@ -1,5 +1,6 @@
 import { captureException } from '@sentry/react-native';
 import { getErrorMessage, hasProperty, isObject } from '@metamask/utils';
+import FilesystemStorage from 'redux-persist-filesystem-storage';
 import { ensureValidState } from './util';
 
 /**
@@ -12,8 +13,10 @@ import { ensureValidState } from './util';
  * deprecated behind the (now removed) `assetsUnifyState` feature flag and are
  * no longer initialized by the Engine. `AssetsController` is the sole source
  * of truth for asset data. This migration removes their now-orphaned
- * top-level `engine.backgroundState` entries so old installs don't carry
- * dead data forever.
+ * top-level `engine.backgroundState` entries, and deletes their per-controller
+ * `persist:<name>` files. The files must be deleted explicitly: they are no
+ * longer part of the persisted controller list, so they are never loaded into
+ * `backgroundState` and would otherwise stay on disk forever.
  */
 export const migrationVersion = 157;
 
@@ -28,10 +31,30 @@ const DEPRECATED_CONTROLLER_NAMES = [
   'MultichainBalancesController',
 ] as const;
 
-const migration = (state: unknown): unknown => {
+const removePersistedControllerFiles = async (): Promise<void> => {
+  await Promise.all(
+    DEPRECATED_CONTROLLER_NAMES.map(async (controllerName) => {
+      try {
+        await FilesystemStorage.removeItem(`persist:${controllerName}`);
+      } catch (error) {
+        captureException(
+          new Error(
+            `Migration ${migrationVersion}: Failed to remove persisted file for ${controllerName}: ${getErrorMessage(
+              error,
+            )}`,
+          ),
+        );
+      }
+    }),
+  );
+};
+
+const migration = async (state: unknown): Promise<unknown> => {
   if (!ensureValidState(state, migrationVersion)) {
     return state;
   }
+
+  await removePersistedControllerFiles();
 
   try {
     const { backgroundState } = state.engine;

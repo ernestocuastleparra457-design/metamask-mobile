@@ -1,9 +1,15 @@
 import { captureException } from '@sentry/react-native';
+import FilesystemStorage from 'redux-persist-filesystem-storage';
 import migrate, { migrationVersion } from './157';
 import { ensureValidState } from './util';
 
 jest.mock('@sentry/react-native', () => ({
   captureException: jest.fn(),
+}));
+
+jest.mock('redux-persist-filesystem-storage', () => ({
+  __esModule: true,
+  default: { removeItem: jest.fn() },
 }));
 
 jest.mock('./util', () => ({
@@ -12,6 +18,7 @@ jest.mock('./util', () => ({
 
 const mockedEnsureValidState = jest.mocked(ensureValidState);
 const mockedCaptureException = jest.mocked(captureException);
+const mockedRemoveItem = jest.mocked(FilesystemStorage.removeItem);
 
 interface TestState {
   engine: {
@@ -40,13 +47,14 @@ describe(`Migration ${migrationVersion}: Strip deprecated asset controller state
   beforeEach(() => {
     jest.clearAllMocks();
     mockedEnsureValidState.mockReturnValue(true);
+    mockedRemoveItem.mockResolvedValue(undefined);
   });
 
   it('reports the expected migration version', () => {
     expect(migrationVersion).toBe(157);
   });
 
-  it('removes all 8 deprecated controller keys from backgroundState and keeps TokensController', () => {
+  it('removes all 8 deprecated controller keys from backgroundState and keeps TokensController', async () => {
     const state = buildValidState({
       AccountTrackerController: { accountsByChainId: {} },
       TokensController: { allTokens: {} },
@@ -59,7 +67,7 @@ describe(`Migration ${migrationVersion}: Strip deprecated asset controller state
       MultichainBalancesController: { balances: {} },
     });
 
-    const result = migrate(state) as TestState;
+    const result = (await migrate(state)) as TestState;
 
     expect(result.engine.backgroundState).toStrictEqual({
       AssetsController: { preserved: true },
@@ -70,13 +78,13 @@ describe(`Migration ${migrationVersion}: Strip deprecated asset controller state
     expect(mockedCaptureException).not.toHaveBeenCalled();
   });
 
-  it('removes only the deprecated controller keys that are present', () => {
+  it('removes only the deprecated controller keys that are present', async () => {
     const state = buildValidState({
       CurrencyRateController: { currentCurrency: 'usd' },
       OtherController: { preserved: true },
     });
 
-    const result = migrate(state) as TestState;
+    const result = (await migrate(state)) as TestState;
 
     expect(result.engine.backgroundState).toStrictEqual({
       AssetsController: { preserved: true },
@@ -85,42 +93,42 @@ describe(`Migration ${migrationVersion}: Strip deprecated asset controller state
     expect(mockedCaptureException).not.toHaveBeenCalled();
   });
 
-  it('does not change state when none of the deprecated controllers are present', () => {
+  it('does not change state when none of the deprecated controllers are present', async () => {
     const state = buildValidState({
       OtherController: { preserved: true },
     });
     const snapshot = JSON.stringify(state);
 
-    const result = migrate(state);
+    const result = await migrate(state);
 
     expect(JSON.stringify(result)).toBe(snapshot);
     expect(mockedCaptureException).not.toHaveBeenCalled();
   });
 
-  it('returns state unchanged when ensureValidState fails', () => {
+  it('returns state unchanged when ensureValidState fails', async () => {
     mockedEnsureValidState.mockReturnValue(false);
     const state = { invalid: true };
 
-    const result = migrate(state);
+    const result = await migrate(state);
 
     expect(result).toBe(state);
     expect(mockedCaptureException).not.toHaveBeenCalled();
   });
 
-  it('returns state unchanged when backgroundState is not an object', () => {
+  it('returns state unchanged when backgroundState is not an object', async () => {
     const state = {
       engine: {
         backgroundState: 'invalid',
       },
     };
 
-    const result = migrate(state);
+    const result = await migrate(state);
 
     expect(result).toBe(state);
     expect(mockedCaptureException).not.toHaveBeenCalled();
   });
 
-  it('captures an exception and returns state unchanged when an error is thrown', () => {
+  it('captures an exception and returns state unchanged when an error is thrown', async () => {
     const state = {
       engine: {
         get backgroundState(): never {
@@ -129,7 +137,7 @@ describe(`Migration ${migrationVersion}: Strip deprecated asset controller state
       },
     };
 
-    const result = migrate(state);
+    const result = await migrate(state);
 
     expect(result).toBe(state);
     expect(mockedCaptureException).toHaveBeenCalledWith(
@@ -139,5 +147,57 @@ describe(`Migration ${migrationVersion}: Strip deprecated asset controller state
         ),
       }),
     );
+  });
+
+  it('deletes the persisted file of each of the 8 deprecated controllers, keeping TokensController', async () => {
+    await migrate(buildValidState());
+
+    expect(mockedRemoveItem.mock.calls.map(([key]) => key).sort()).toEqual(
+      [
+        'AccountTrackerController',
+        'CurrencyRateController',
+        'TokenBalancesController',
+        'TokenRatesController',
+        'TokenDetectionController',
+        'MultichainAssetsController',
+        'MultichainAssetsRatesController',
+        'MultichainBalancesController',
+      ]
+        .map((name) => `persist:${name}`)
+        .sort(),
+    );
+    expect(mockedRemoveItem).not.toHaveBeenCalledWith('persist:TokensController');
+  });
+
+  it('captures a failed file removal without aborting the migration', async () => {
+    mockedRemoveItem.mockImplementation(async (key: string) => {
+      if (key === 'persist:CurrencyRateController') {
+        throw new Error('disk error');
+      }
+    });
+    const state = buildValidState({
+      CurrencyRateController: { currentCurrency: 'usd' },
+    });
+
+    const result = (await migrate(state)) as TestState;
+
+    expect(mockedRemoveItem).toHaveBeenCalledTimes(8);
+    expect(mockedCaptureException).toHaveBeenCalledTimes(1);
+    expect(mockedCaptureException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.stringContaining('CurrencyRateController'),
+      }),
+    );
+    expect(result.engine.backgroundState).toStrictEqual({
+      AssetsController: { preserved: true },
+    });
+  });
+
+  it('does not delete files when ensureValidState fails', async () => {
+    mockedEnsureValidState.mockReturnValue(false);
+
+    await migrate({ invalid: true });
+
+    expect(mockedRemoveItem).not.toHaveBeenCalled();
   });
 });
