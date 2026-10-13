@@ -28,28 +28,35 @@ import { useOneShotBusyRefetch } from './useOneShotBusyRefetch';
 export const useEarningsSummary = (
   profileId: string | undefined,
 ): {
-  fetchEarningsSummary: (options?: { forceFresh?: boolean }) => Promise<void>;
+  fetchEarningsSummary: (options?: {
+    forceFresh?: boolean;
+  }) => Promise<EarningsSummaryDto | undefined>;
 } => {
   const dispatch = useDispatch();
   const { cancel: cancelBusyRefetch, arm: armBusyRefetch } =
     useOneShotBusyRefetch();
   const fetchRef = useRef<
-    (options?: { forceFresh?: boolean; followUp?: boolean }) => Promise<void>
-  >(() => Promise.resolve());
+    (options?: {
+      forceFresh?: boolean;
+      followUp?: boolean;
+    }) => Promise<EarningsSummaryDto | undefined>
+  >(() => Promise.resolve(undefined));
   const isLoadingRef = useRef(false);
 
   const fetchEarningsSummary = useCallback(
     async ({
       forceFresh,
       followUp = false,
-    }: { forceFresh?: boolean; followUp?: boolean } = {}): Promise<void> => {
+    }: { forceFresh?: boolean; followUp?: boolean } = {}): Promise<
+      EarningsSummaryDto | undefined
+    > => {
       if (!profileId) {
-        return;
+        return undefined;
       }
-      // The Earnings tab stays mounted, so a second call on this instance
-      // waits until the in-flight one settles.
+      // The Earnings tab stays mounted. A second call on this instance
+      // does not start another request, and it has no summary to return.
       if (isLoadingRef.current) {
-        return;
+        return undefined;
       }
       isLoadingRef.current = true;
 
@@ -64,6 +71,7 @@ export const useEarningsSummary = (
             { forceFresh },
           );
         dispatch(setEarningsSummary({ profileId, data: summary }));
+        return summary;
       } catch (error) {
         reportRewardsMoneyReadFailure(
           error,
