@@ -148,11 +148,6 @@ import { rewardsMoneyControllerInit } from './controllers/rewards-money-controll
 import { GatorPermissionsControllerInit } from './controllers/gator-permissions-controller';
 import type { GatorPermissionsController } from '@metamask/gator-permissions-controller';
 import { DelegationControllerInit } from './controllers/delegation/delegation-controller-init';
-import { selectedNetworkControllerInit } from './controllers/selected-network-controller-init';
-import { permissionControllerInit } from './controllers/permission-controller-init';
-///: BEGIN:ONLY_INCLUDE_IF(snaps)
-import { subjectMetadataControllerInit } from './controllers/subject-metadata-controller-init';
-///: END:ONLY_INCLUDE_IF
 import { PreferencesController } from '@metamask/preferences-controller';
 import { preferencesControllerInit } from './controllers/preferences-controller-init';
 import { TransactionPayControllerInit } from './controllers/transaction-pay-controller';
@@ -326,15 +321,10 @@ export class Engine {
       initFunctions: {
         LoggingController: loggingControllerInit,
         PreferencesController: preferencesControllerInit,
-        PermissionController: permissionControllerInit,
-        ///: BEGIN:ONLY_INCLUDE_IF(snaps)
-        SubjectMetadataController: subjectMetadataControllerInit,
-        ///: END:ONLY_INCLUDE_IF
         AccountTreeController: accountTreeControllerInit,
         AppMetadataController: appMetadataControllerInit,
         AssetsContractController: assetsContractControllerInit,
         AccountTrackerController: accountTrackerControllerInit,
-        SelectedNetworkController: selectedNetworkControllerInit,
         GatorPermissionsController: GatorPermissionsControllerInit,
         SmartTransactionsController: smartTransactionsControllerInit,
         TransactionPayController: TransactionPayControllerInit,
@@ -473,8 +463,9 @@ export class Engine {
       messengerClientsByName.RewardsMoneyController;
     const gatorPermissionsController =
       messengerClientsByName.GatorPermissionsController;
-    const selectedNetworkController =
-      messengerClientsByName.SelectedNetworkController;
+    const selectedNetworkController = this.#wallet.getInstance(
+      'SelectedNetworkController',
+    );
     const preferencesController = messengerClientsByName.PreferencesController;
     const delegationController = messengerClientsByName.DelegationController;
     const addressBookController = this.#wallet.getInstance(
@@ -530,7 +521,9 @@ export class Engine {
     this.gatorPermissionsController = gatorPermissionsController;
     this.transactionController = transactionController;
     this.smartTransactionsController = smartTransactionsController;
-    this.permissionController = messengerClientsByName.PermissionController;
+    this.permissionController = this.#wallet.getInstance(
+      'PermissionController',
+    );
     this.preferencesController = preferencesController;
     this.keyringController = this.#wallet.getInstance('KeyringController');
 
@@ -568,8 +561,9 @@ export class Engine {
       messengerClientsByName.NotificationServicesController;
     const notificationServicesPushController =
       messengerClientsByName.NotificationServicesPushController;
-    this.subjectMetadataController =
-      messengerClientsByName.SubjectMetadataController;
+    this.subjectMetadataController = this.#wallet.getInstance(
+      'SubjectMetadataController',
+    );
     const authenticationController =
       messengerClientsByName.AuthenticationController;
     const userStorageController = messengerClientsByName.UserStorageController;
