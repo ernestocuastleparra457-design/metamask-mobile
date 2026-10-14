@@ -1229,7 +1229,6 @@ export type MessengerClientsToInitialize =
   | 'NotificationServicesController'
   | 'NotificationServicesPushController'
   | 'AppMetadataController'
-  | 'SubjectMetadataController'
   | 'UserStorageController'
   ///: END:ONLY_INCLUDE_IF
   | 'BackendWebSocketService'
@@ -1267,7 +1266,6 @@ export type MessengerClientsToInitialize =
   | 'TokensController'
   | 'TokenSearchDiscoveryDataController'
   | 'TransactionPayController'
-  | 'PermissionController'
   | 'PerpsController'
   | 'PredictController'
   | 'PredictMarketDataService'
@@ -1296,7 +1294,6 @@ export type MessengerClientsToInitialize =
   | 'NeoBankService'
   | 'GatorPermissionsController'
   | 'DelegationController'
-  | 'SelectedNetworkController'
   | 'ProfileMetricsController'
   | 'ProfileMetricsService'
   | 'ProofOfOwnershipService'
