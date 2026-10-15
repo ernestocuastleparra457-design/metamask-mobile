@@ -27,6 +27,7 @@ export const profileControllerToMySocialProfile = (
   profileId: profile.profileId,
   displayName: profile.displayName,
   handle: profile.username,
+  createdAt: profile.createdAt,
   bio: profile.bio || null,
   imageUrl: profile.avatarUrl || null,
   avatarPresetId: null,

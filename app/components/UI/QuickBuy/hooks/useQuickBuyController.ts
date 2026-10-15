@@ -93,6 +93,10 @@ import { selectSourceWalletAddress } from '../../../../selectors/bridge';
 import { isHardwareAccount } from '../../../../util/address';
 import Logger from '../../../../util/Logger';
 import { buildSocialLoggerErrorOptions } from '../../../../util/social/socialServiceTelemetry';
+import {
+  isSocialTradeSource,
+  recordSocialTrade,
+} from '../../../../util/social/socialActivityStorage';
 import { useTheme } from '../../../../util/theme';
 import { calcTokenValue } from '../../../../util/transactions';
 import { useRefreshSmartTransactionsLiveness } from '../../../hooks/useRefreshSmartTransactionsLiveness';
@@ -1720,6 +1724,9 @@ export function useQuickBuyController(
         undefined, // inputPrimaryDenomination
         BRIDGE_QUOTE_RESPONSE_MIGRATION_PHASE,
       );
+      if (isSocialTradeSource(analyticsContext.source)) {
+        recordSocialTrade(walletAddress);
+      }
       const txHash =
         submitResult &&
         typeof (submitResult as { hash?: unknown }).hash === 'string'
@@ -1837,6 +1844,7 @@ export function useQuickBuyController(
     sourceTokenAmount,
     estimatedReceiveAmount,
     target,
+    analyticsContext.source,
   ]);
 
   // Preformatted headline value in the user's display currency (correct symbol
