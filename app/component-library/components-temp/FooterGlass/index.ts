@@ -1,2 +1,2 @@
-export { default } from './GlassFooter';
-export type { GlassFooterProps } from './GlassFooter';
+export { default } from './FooterGlass';
+export type { FooterGlassProps } from './FooterGlass';

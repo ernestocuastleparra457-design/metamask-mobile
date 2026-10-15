@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../../util/theme';
 import { colorWithOpacity } from '../../../util/colors/colorWithOpacity';
 
-export interface GlassFooterProps {
+export interface FooterGlassProps {
   children: React.ReactNode;
   /** Floats over the bottom of the screen so content scrolls behind it. */
   isOverlay?: boolean;
@@ -59,14 +59,14 @@ const styles = StyleSheet.create({
  * A footer without a fill, like the iOS 26 scroll edge. In flow it fades the
  * content above into the page; as an overlay the content scrolls behind it.
  */
-const GlassFooter = ({
+const FooterGlass = ({
   children,
   isOverlay = false,
   includesBottomInset = false,
   onLayout,
   style,
   testID,
-}: GlassFooterProps) => {
+}: FooterGlassProps) => {
   const { colors } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const opacities = isOverlay ? OVERLAY_OPACITIES : EDGE_OPACITIES;
@@ -101,4 +101,4 @@ const GlassFooter = ({
   );
 };
 
-export default GlassFooter;
+export default FooterGlass;

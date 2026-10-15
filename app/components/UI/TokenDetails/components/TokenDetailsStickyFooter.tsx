@@ -37,8 +37,8 @@ import { AppThemeKey } from '../../../../util/theme/models';
 import { isAsiaGeolocationLocation } from '../../../../util/region/isAsiaGeolocationLocation';
 import { useRWAToken } from '../../Bridge/hooks/useRWAToken';
 import ButtonGlass from '../../../../component-library/components-temp/ButtonGlass';
-import GlassCapsule from '../../../../component-library/components-temp/GlassCapsule';
-import GlassFooter from '../../../../component-library/components-temp/GlassFooter';
+import CapsuleGlass from '../../../../component-library/components-temp/CapsuleGlass';
+import FooterGlass from '../../../../component-library/components-temp/FooterGlass';
 import { useTokenDetailsGlassFooter } from '../hooks/useTokenDetailsGlassFooter';
 import type { BridgeToken } from '../../Bridge/types';
 import useTokenBuyability from '../../Ramp/hooks/useTokenBuyability';
@@ -216,9 +216,9 @@ const TokenDetailsStickyFooter: React.FC<TokenStickyFooterProps> = ({
     : styles.iconButton;
   const withQuickBuyGlass = (button: React.ReactElement) =>
     isRefreshed ? (
-      <GlassCapsule twClassName="h-12 w-12 justify-center">
+      <CapsuleGlass twClassName="h-12 w-12 justify-center">
         {button}
-      </GlassCapsule>
+      </CapsuleGlass>
     ) : (
       button
     );
@@ -828,14 +828,14 @@ const TokenDetailsStickyFooter: React.FC<TokenStickyFooterProps> = ({
       </GestureDetector>
     </BottomSheetDialog>
   ) : isRefreshed ? (
-    <GlassFooter
+    <FooterGlass
       isOverlay={isOverlay}
       onLayout={onLayout}
       style={legacyFooterStyle}
       testID="token-details-glass-footer"
     >
       {footerActions}
-    </GlassFooter>
+    </FooterGlass>
   ) : (
     <View style={legacyFooterStyle}>{footerActions}</View>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, processColor } from 'react-native';
 import { render } from '@testing-library/react-native';
-import GlassFooter from './GlassFooter';
+import FooterGlass from './FooterGlass';
 import { mockTheme } from '../../../util/theme';
 import { colorWithOpacity } from '../../../util/colors/colorWithOpacity';
 
@@ -11,12 +11,12 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => mockInsets,
 }));
 
-describe('GlassFooter', () => {
+describe('FooterGlass', () => {
   it('fades the content above into the screen colour', () => {
     const { getByTestId, getByText } = render(
-      <GlassFooter testID="footer">
+      <FooterGlass testID="footer">
         <Text>Buy</Text>
-      </GlassFooter>,
+      </FooterGlass>,
     );
 
     expect(getByText('Buy')).toBeOnTheScreen();
@@ -34,17 +34,17 @@ describe('GlassFooter', () => {
 
   it('pads for the bottom inset only when asked', () => {
     const { getByTestId, rerender } = render(
-      <GlassFooter testID="footer">
+      <FooterGlass testID="footer">
         <Text>Buy</Text>
-      </GlassFooter>,
+      </FooterGlass>,
     );
 
     expect(getByTestId('footer')).not.toHaveStyle({ paddingBottom: 34 });
 
     rerender(
-      <GlassFooter testID="footer" includesBottomInset>
+      <FooterGlass testID="footer" includesBottomInset>
         <Text>Buy</Text>
-      </GlassFooter>,
+      </FooterGlass>,
     );
 
     expect(getByTestId('footer')).toHaveStyle({ paddingBottom: 34 });
@@ -52,9 +52,9 @@ describe('GlassFooter', () => {
 
   it('floats at the bottom with the fade behind it when overlaid', () => {
     const { getByTestId } = render(
-      <GlassFooter testID="footer" isOverlay>
+      <FooterGlass testID="footer" isOverlay>
         <Text>Buy</Text>
-      </GlassFooter>,
+      </FooterGlass>,
     );
 
     expect(getByTestId('footer')).toHaveStyle({
@@ -66,9 +66,9 @@ describe('GlassFooter', () => {
 
   it('leaves the fade without a test ID when the footer has none', () => {
     const { queryByTestId } = render(
-      <GlassFooter>
+      <FooterGlass>
         <Text>Buy</Text>
-      </GlassFooter>,
+      </FooterGlass>,
     );
 
     expect(queryByTestId('undefined-fade')).toBeNull();
