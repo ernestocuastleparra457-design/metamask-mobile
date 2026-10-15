@@ -4,7 +4,7 @@ import { GlassView } from 'expo-glass-effect';
 import { BlurView } from 'expo-blur';
 import { ButtonVariant } from '@metamask/design-system-react-native';
 import ButtonGlass from './ButtonGlass';
-import { GLASS_SURFACE_SHEEN_TEST_ID } from '../GlassSurface';
+import { GLASS_SURFACE_SHEEN_TEST_ID } from '../BoxGlass';
 import { mockTheme } from '../../../util/theme';
 
 describe('ButtonGlass', () => {

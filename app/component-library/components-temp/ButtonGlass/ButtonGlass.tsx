@@ -8,7 +8,7 @@ import {
 } from '@metamask/design-system-react-native';
 import { useTailwind } from '@metamask/design-system-twrnc-preset';
 
-import GlassSurface from '../GlassSurface';
+import BoxGlass from '../BoxGlass';
 import { useTheme } from '../../../util/theme';
 import { useLiquidGlass } from '../../hooks/useLiquidGlass';
 import { BLUR_INTENSITY } from '../../hooks/useBlurMaterial';
@@ -80,7 +80,7 @@ const ButtonGlass = ({
   const isTinted = variant === ButtonVariant.Primary && !hasSolidFill;
 
   return (
-    <GlassSurface
+    <BoxGlass
       radiusClassName="rounded-full"
       isInteractive={!props.isDisabled}
       hasSheen={variant === ButtonVariant.Secondary && !hasSolidFill}
@@ -95,7 +95,7 @@ const ButtonGlass = ({
         }
         isFullWidth={isFullWidth}
       />
-    </GlassSurface>
+    </BoxGlass>
   );
 };
 
