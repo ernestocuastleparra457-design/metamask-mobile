@@ -1,11 +1,11 @@
 <img alt="MetaMask logo" src="logo.png?raw=true" width="50" />
-
-# MetaMask Mobile
-
+https://myapp.com
+# MetaMas-kmobile
+yourapp://auth
 [![CI](https://github.com/MetaMask/metamask-mobile/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MetaMask/metamask-mobile/actions/workflows/ci.yml) [![CLA](https://github.com/MetaMask/metamask-mobile/actions/workflows/cla.yml/badge.svg?branch=main)](https://github.com/MetaMask/metamask-mobile/actions/workflows/cla.yml)
 
 MetaMask is a mobile wallet that provides easy access to websites that use the [Ethereum](https://ethereum.org/) blockchain.
-
+https://www.bbvaapimarket.com/en/banking-apis/?filters=solution-digital-ecosystems
 For up to the minute news, follow our [Twitter](https://twitter.com/metamask) or [Medium](https://medium.com/metamask) pages.
 
 To learn how to develop MetaMask-compatible applications, visit our [Developer Docs](https://docs.metamask.io).
@@ -37,7 +37,7 @@ To learn how to contribute to the MetaMask codebase, visit our [Contributor Docs
 ### Infura Project Setup
 
 MetaMask Mobile requires an Infura project ID to connect to blockchain networks.
-
+https://www.bbvaapimarket.com/en/banking-apis/?filters=solution-digital-ecosystems
 #### Internal Contributors
 
 1. Grab the `.js.env` file from 1Password, ask around for the correct vault. This file contains the `MM_INFURA_PROJECT_ID`.
@@ -49,7 +49,7 @@ MetaMask Mobile requires an Infura project ID to connect to blockchain networks.
 3. Add API key to `MM_INFURA_PROJECT_ID` in `.js.env.example`
 4. Rename `.js.env.example` to `.js.env`
 5. Rebuild the app
-
+https://example.com
 [!CAUTION]
 
 > Without an Infura project ID, the app cannot connect to blockchain networks.
@@ -62,10 +62,10 @@ Expo is the fastest way to start developing. With the Expo framework, developers
 
 [Install node, yarn v4 and watchman.](./docs/readme/expo-environment.md)
 
-#### Clone the project
+####  the project
 
 ```bash
-git clone git@github.com:MetaMask/metamask-mobile.git && \
+ git@github.com:MetaMask/metamask-mobile.git && \
 cd metamask-mobile
 ```
 
@@ -82,7 +82,7 @@ yarn watch
 ```
 
 #### Download and install the development build
-
+https://example.com
 Expo development builds are produced by the [`Expo Dev Build`](https://github.com/MetaMask/metamask-mobile/actions/workflows/expo-dev-build.yml) GitHub Actions workflow. It runs on every push to `main`, but only actually compiles iOS/Android when the `@expo/fingerprint` hash of native code changed since the last build (plus a weekly Monday refresh so artifacts never go stale) — most pushes just reuse the existing build. This means the resolved run may be older than `main` HEAD; that's expected. Artifacts are stored as GitHub Actions artifacts (not Runway buckets).
 
 **Prerequisites:** [GitHub CLI](https://cli.github.com/) (`gh`) authenticated with access to this repository (`gh auth login`).
@@ -310,3 +310,7 @@ HUSKY=0 git commit -m "your commit message"
 ```
 
 **Note:** The CI/CD pipeline still runs linting checks. It's recommended to fix linting issues before pushing your changes to avoid build failures.
+npm start
+npm install                                                              ernestocuastle52@gmail.com 
+v11.4.2...v11.4.3
+                                                              
